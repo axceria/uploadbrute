@@ -1,24 +1,5 @@
 #!/usr/bin/env python3
 
-# Made by Sagiv
-
-# Upload Bypass is a simple tool designed to assist penetration testers and bug hunters in testing file upload mechanisms.
-
-# Copyright (C) 2024 Sagiv Michael
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 # importing necessary modules
 import argparse
 import importlib
@@ -32,6 +13,12 @@ from lib import format_detector
 from lib import alerts
 from lib.debug import save_stack_trace
 from lib.list_modules import list_all_modules
+
+#importing colors to the terminal
+import colorama
+from termcolor import colored
+
+coloroma.init()
 
 
 class Upload_Bypass:
@@ -111,16 +98,16 @@ class Upload_Bypass:
                     list_all_modules()
 
                 if not options.exploitation and not options.detect and not options.anti_malware:
-                    alerts.error("You must specify a mode.")
+                    alerts.error(colored("You must specify a mode.","red"))
 
                 if self.request_file == 'not_set':
-                    alerts.error(f"-r, --request_file is a required argument!")
+                    alerts.error(colored(f"-r, --request_file is a required argument!","red"))
 
                 if self.file_extension == 'not_set' and options.anti_malware:
                     options.file_extension = 'com'
 
                 elif self.file_extension == 'not_set':
-                    alerts.error(f"-E, --extension is a required argument, unless --anti_malware flag is active.")
+                    alerts.error(colored(f"-E, --extension is a required argument, unless --anti_malware flag is active.","red"))
 
                 if "." in self.file_extension:
                     options.file_extension = self.file_extension.replace(".", "")
@@ -128,7 +115,7 @@ class Upload_Bypass:
 
                 if self.success_message == 'not_selected' and self.failureMessage == 'not_selected':
                     alerts.warning(
-                        f"Success / Failure message isn't set, a successful upload will be based on {options.status_code} status code.")
+                        colored(f"Success / Failure message isn't set, a successful upload will be based on {options.status_code} status code.","red"))
                     options.upload_message = 'not_selected'
                     options.text_or_code = options.status_code
                     time.sleep(3)
@@ -184,7 +171,7 @@ class Upload_Bypass:
                     }
 
                 if self.burp_http or self.burp_https:
-                    alerts.info(f"Proxy is running on 127.0.0.1:8080")
+                    alerts.info(colored(f"Proxy is running on 127.0.0.1:8080","magenta"))
                     options.proxies = {
                         'http': "127.0.0.1:8080",
                         'https': "127.0.0.1:8080",
@@ -197,7 +184,7 @@ class Upload_Bypass:
 
                 # Check if arguments supplied by the user is less than 2
                 if len(sys.argv) < 2:
-                    print("Try '-h or --help' for more information.")
+                    print(colored("Try '-h or --help' for more information.","cyan"))
                     sys.exit(1)
 
                 # Define session withing the argsparse namespace, for an ease use later
@@ -217,7 +204,7 @@ class Upload_Bypass:
                     allowed_extension = "".join(allowed_extension)
                     if allowed_extension == "":
                         alerts.error(
-                            "Couldn't determine allowed extension to be uploaded, use the --insecure flag if you are targeting HTTPs requests or check if the allowed extension exists in config.py.")
+                            colored("Couldn't determine allowed extension to be uploaded, use the --insecure flag if you are targeting HTTPs requests or check if the allowed extension exists in config.py.","yellow"))
 
                 # Include or Exclude modules
                 all_modules = config.active_modules
@@ -256,7 +243,7 @@ class Upload_Bypass:
                 total_functions = len(all_modules)
 
                 if len(all_modules) == 0:
-                    alerts.error("The module/s you chose does not support detection/anti-malware mode.")
+                    alerts.error(colored("The module/s you chose does not support detection/anti-malware mode.","yellow"))
                 for module in all_modules:
                     current_progress += 1
                     # Execute each module with its necessary arguments
@@ -320,7 +307,7 @@ if __name__ == "__main__":
             with open("config/version.json", "w") as file:
                 json.dump(version, file, indent=4)
         except requests.ConnectionError:
-            alerts.info("The program couldn't establish a connection to the internet, check your internet connection.")
+            alerts.info(colored("The program couldn't establish a connection to the internet, check your internet connection.","red"))
 
         resume_file = options.state
 
@@ -344,7 +331,7 @@ if __name__ == "__main__":
             # Save the stack trace to the 'debug' directory
             save_stack_trace(debug_mode, sys.argv, options.request_file)
         else:
-            alerts.error(f'{e}\n{red}[-]{reset} For a full stack trace error use the --debug flag')
+            alerts.error(colored(f'{e}\n{red}[-]{reset} For a full stack trace error use the --debug flag', 'red')
 
     except KeyboardInterrupt:
-        alerts.error("Caught CTRL + C. Exiting...")
+        alerts.error(colored("Caught CTRL + C. Exiting...","cyan"))
